@@ -5,6 +5,7 @@
     <string name="team">Team</string>
     <string name="news">News</string>
     <string name="contact_us">Contact Us</string>
+    <string name="mdm">MDM</string>
     <string-array name="tab_names">
         <item>About Us</item>
         <item>Portfolio</item>
