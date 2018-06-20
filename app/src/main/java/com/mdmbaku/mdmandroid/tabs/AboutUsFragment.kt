@@ -17,23 +17,26 @@ import com.glide.slider.library.SliderTypes.TextSliderView
 import com.glide.slider.library.Tricks.ViewPagerEx
 import com.glide.slider.library.svg.GlideApp
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.mdmbaku.mdmandroid.HomeActivity
 import com.mdmbaku.mdmandroid.R
 import com.mdmbaku.mdmandroid.data.WpPage
 import com.mdmbaku.mdmandroid.utils.IDataForFragment
 import com.mdmbaku.mdmandroid.utils.Network
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_about_us.*
 import org.json.JSONObject
-import java.io.StringReader
 
 private lateinit var gson: Gson
 
 class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFragment {
     private var listUrl = mutableListOf<String>()
     private var listText = mutableListOf<String>()
+    private var realm: Realm = Realm.getDefaultInstance()
+    private var mAboutUsPage: WpPage? = null
     private lateinit var mSlider: SliderLayout
     private lateinit var mPartnersLogosImageView: ImageView
     private lateinit var mAboutUsTitleTextView: TextView
+    private lateinit var mAboutUsContentTextView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -42,6 +45,15 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
         mSlider = rootView.findViewById(R.id.slider)
         mPartnersLogosImageView = rootView.findViewById(R.id.partners_logos)
         mAboutUsTitleTextView = rootView.findViewById(R.id.about_us_title)
+        mAboutUsContentTextView = rootView.findViewById(R.id.about_us_content)
+
+        if ((activity as HomeActivity).isNetworkAvailable()) {
+            Network.getInstance().requestAboutUsPage(context!!, this, Network.Companion.RequestType.REQUEST_ABOUT_US)
+        } else {
+            if (mAboutUsPage != null) {
+                renderAboutUsContent()
+            }
+        }
 
         listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/HovsanCity.png")
         listText.add("Rational organization of space needed to any human activities Design With Us")
@@ -68,12 +80,8 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
         listText.add("")
 
         // if you want show image only / without description text use DefaultSliderView instead
-
         val requestOptions = RequestOptions()
         requestOptions.centerCrop()
-        //.diskCacheStrategy(DiskCacheStrategy.NONE)
-        //.placeholder(R.drawable.placeholder)
-        //.error(R.drawable.placeholder);
 
         // initialize SliderLayout
         for (i in listUrl.indices) {
@@ -91,35 +99,58 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
     }
 
     override fun dataForFragment(jsonObject: JSONObject, requestType: Network.Companion.RequestType) {
-        val aboutUsPageStringReader = StringReader(jsonObject.toString())
-        val aboutUsPage: WpPage = gson.fromJson(aboutUsPageStringReader, WpPage::class.java)
-        val aboutUsTitle = aboutUsPage.title.renderedTitle
-        val aboutUsContent = removeListIcons(aboutUsPage.content.renderedContent)
 
-        mAboutUsTitleTextView.text = aboutUsTitle
+        if (requestType == Network.Companion.RequestType.REQUEST_ABOUT_US) {
+            val aboutUsPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            about_us_content.text = Html.fromHtml(aboutUsContent, Html.FROM_HTML_MODE_LEGACY)
-        } else {
-            about_us_content.text = Html.fromHtml(aboutUsContent)
+            try {
+                realm.beginTransaction()
+                /*val recordsToRemove = realm.where(WpPage :: class.java).equalTo("id", aboutUsPage.id).findAll()
+                recordsToRemove.deleteAllFromRealm()*/
+                realm.copyToRealmOrUpdate(aboutUsPage)
+                realm.commitTransaction()
+
+                updateAboutUsPage()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("Realm error", e.message)
+            }
+
+            renderAboutUsContent()
+        }
+
+    }
+
+    private fun updateAboutUsPage() {
+        mAboutUsPage = realm.where(WpPage::class.java).equalTo("id",
+                Network.Companion.WpPageId.ABOUT_US.pageId).findFirst()
+    }
+
+    private fun renderAboutUsContent() {
+        val aboutUsTitle = mAboutUsPage?.title?.renderedTitle
+        if (aboutUsTitle != null && mAboutUsPage?.content != null) {
+            val aboutUsContent = removeListIcons(mAboutUsPage?.content?.renderedContent!!)
+
+            mAboutUsTitleTextView.text = aboutUsTitle
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mAboutUsContentTextView.text = Html.fromHtml(aboutUsContent, Html.FROM_HTML_MODE_LEGACY)
+            } else {
+                mAboutUsContentTextView.text = Html.fromHtml(aboutUsContent)
+            }
         }
 
         GlideApp.with(this)
                 .load("http://mdmbaku.com/wp-content/uploads/2018/03/CompanyPresentationAchive.008.jpeg")
                 .into(mPartnersLogosImageView)
-
     }
 
     private fun removeListIcons(aboutUsContent: String): String {
-        val resultString = aboutUsContent.replace("<ul>", "")
+
+        return aboutUsContent.replace("<ul>", "")
                 .replace("</ul>", "")
                 .replace("<li>", "<p>")
                 .replace("</li>", "</p>")
-              /*  .substring(0, aboutUsContent.indexOf("img class", ignoreCase = true))*/
-
-        Log.d("Asim", resultString)
-
-        return resultString
     }
 
 
@@ -148,6 +179,7 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Network.getInstance().requestAboutUsPage(context!!, this, Network.Companion.RequestType.REQUEST_ABOUT_US)
+
+        updateAboutUsPage()
     }
 }

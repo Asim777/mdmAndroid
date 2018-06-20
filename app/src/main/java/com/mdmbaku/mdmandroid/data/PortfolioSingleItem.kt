@@ -1,8 +1,9 @@
 package com.mdmbaku.mdmandroid.data
 
-import android.os.Parcel
-import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import io.realm.RealmObject
 
-data class PortfolioSingleItem(
-        val content: WpPageContent
-)
+open class PortfolioSingleItem(
+        @SerializedName("content")
+        open var content: WpPageContent? = null
+) : RealmObject()

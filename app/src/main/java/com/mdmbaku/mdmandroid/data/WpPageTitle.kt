@@ -1,7 +1,10 @@
 package com.mdmbaku.mdmandroid.data
 
 import com.google.gson.annotations.SerializedName
+import io.realm.RealmObject
+import io.realm.annotations.Required
 
-class WpPageTitle (
-        @SerializedName("rendered") val renderedTitle: String
-)
+open class WpPageTitle(
+        @Required
+        @SerializedName("rendered") open var renderedTitle: String = ""
+) : RealmObject()

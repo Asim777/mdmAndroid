@@ -13,7 +13,12 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="News" />
+            android:text="@string/coming_soon"
+            android:layout_gravity="center"
+            android:textColor="#999999"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,5 +1,7 @@
 package com.mdmbaku.mdmandroid
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
@@ -71,18 +73,6 @@ class HomeActivity : AppCompatActivity() {
 
         setupViewPager()
         tabLayout.setupWithViewPager(mViewPager)
-
-        val tabListener = object : ActionBar.TabListener {
-            override fun onTabReselected(tab: ActionBar.Tab?, ft: FragmentTransaction?) {
-            }
-
-            override fun onTabUnselected(tab: ActionBar.Tab?, ft: FragmentTransaction?) {
-            }
-
-            override fun onTabSelected(tab: ActionBar.Tab, ft: FragmentTransaction?) {
-                mViewPager.currentItem = tab.position
-            }
-        }
     }
 
     private fun setupViewPager() {
@@ -105,5 +95,11 @@ class HomeActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }

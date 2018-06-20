@@ -2,13 +2,23 @@ package com.mdmbaku.mdmandroid.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import io.realm.RealmObject
+import io.realm.annotations.Required
 
-data class PortfolioItem(
-        val title: String,
-        val thumbnail: String,
-        val link: String,
-        val slug: String
-) : Parcelable {
+open class PortfolioItem(
+        @Required
+        open var title: String = "",
+
+        @Required
+        open var thumbnail: String = "",
+
+        @Required
+        open var link: String = "",
+
+        @Required
+        open var slug: String = ""
+) : RealmObject(), Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),

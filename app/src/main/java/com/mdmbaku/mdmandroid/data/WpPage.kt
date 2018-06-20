@@ -1,9 +1,14 @@
 package com.mdmbaku.mdmandroid.data
 
 import com.google.gson.annotations.SerializedName
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
-data class WpPage(
-        @SerializedName("id") val id: Int,
-        @SerializedName("title") val title: WpPageTitle,
-        @SerializedName("content") val content: WpPageContent
-)
+open class WpPage(
+        @PrimaryKey
+        @SerializedName("id") open var id: Int = 0,
+
+        @SerializedName("title") open var title: WpPageTitle? = null,
+
+        @SerializedName("content") open var content: WpPageContent? = null
+) : RealmObject()

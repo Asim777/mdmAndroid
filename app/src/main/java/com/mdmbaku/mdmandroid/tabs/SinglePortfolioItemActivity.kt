@@ -3,6 +3,8 @@ package com.mdmbaku.mdmandroid.tabs
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.MenuItem
+import android.widget.ImageView
 import com.glide.slider.library.svg.GlideApp
 import com.google.gson.Gson
 import com.mdmbaku.mdmandroid.R
@@ -10,20 +12,24 @@ import com.mdmbaku.mdmandroid.data.PortfolioItem
 import com.mdmbaku.mdmandroid.data.PortfolioSingleItem
 import com.mdmbaku.mdmandroid.utils.IDataForActivity
 import com.mdmbaku.mdmandroid.utils.Network
-import kotlinx.android.synthetic.main.activity_single_portfolio_item.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.StringReader
+
 
 private val gson: Gson = Gson()
 
 class SinglePortfolioItemActivity : AppCompatActivity(), IDataForActivity {
 
+    lateinit var mPortfolioImageView: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_single_portfolio_item)
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        mPortfolioImageView = findViewById(R.id.portfolio_image)
         setSupportActionBar(toolbar)
 
         val portfolioItem = intent.getParcelableExtra<PortfolioItem>(PORTFOLIO_ITEM)
@@ -47,20 +53,21 @@ class SinglePortfolioItemActivity : AppCompatActivity(), IDataForActivity {
                 val singlePortfolioItemContentStringReader = StringReader(jsonArray.get(0).toString())
                 val portfolioSingleItem = gson.fromJson(singlePortfolioItemContentStringReader, PortfolioSingleItem::class.java)
 
-                val portfolioContent = portfolioSingleItem.content.renderedContent
-                val portfolioSingleImageLink = portfolioContent.substring(portfolioContent.indexOf("768w,") + 6,
-                        portfolioContent.indexOf("1024w") -1)
-                GlideApp.with(this)
+                val portfolioContent = portfolioSingleItem.content?.renderedContent
+                val portfolioSingleImageLink = portfolioContent?.substring(portfolioContent.indexOf("768w,") + 6,
+                        portfolioContent.indexOf("1024w") - 1)
+                GlideApp.with(applicationContext)
                         .load(portfolioSingleImageLink)
-                        .into(portfolio_image)
-
-
-                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    portfolio_content.text = Html.fromHtml(portfolioContent, Html.FROM_HTML_MODE_LEGACY)
-                } else {
-                    portfolio_content.text = Html.fromHtml(portfolioContent)
-                }*/
+                        .into(mPortfolioImageView)
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            android.R.id.home -> finish()
+        }
+        return true
     }
 }
