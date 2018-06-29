@@ -21,6 +21,8 @@
     <style name="AppTheme.DrawerMenu">
         <item name="android:textSize">18sp</item>
         <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
     </style>
 
 </resources>
