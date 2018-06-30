@@ -88,7 +88,8 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
             val sliderView = TextSliderView(activity)
             sliderView
                     .image(listUrl[i])
-                    .description(listText[i])
+                    .description(listText[i]+"\n")
+                    .setProgressBarVisible(true)
                     .setRequestOption(requestOptions)
                     .setBackgroundColor(Color.WHITE)
 

@@ -16,5 +16,8 @@
         <item
             android:id="@+id/contact_us"
             android:title="@string/contact_us" />
+        <item
+            android:id="@+id/my_account"
+            android:title="@string/my_account" />
     </group>
 </menu>

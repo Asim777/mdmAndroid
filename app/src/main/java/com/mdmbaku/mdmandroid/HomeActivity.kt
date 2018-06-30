@@ -65,6 +65,9 @@ class HomeActivity : AppCompatActivity() {
                 contact_us -> {
                     tab = tabLayout.getTabAt(4)
                 }
+                my_account -> {
+                    tab = tabLayout.getTabAt(5)
+                }
             }
 
             tab?.select()
@@ -82,9 +85,10 @@ class HomeActivity : AppCompatActivity() {
         mTabsPagerAdapter.addFragment(TeamFragment())
         mTabsPagerAdapter.addFragment(NewsFragment())
         mTabsPagerAdapter.addFragment(ContactUsFragment())
+        mTabsPagerAdapter.addFragment(MyAccountFragment())
 
         mViewPager.adapter = mTabsPagerAdapter
-        mViewPager.offscreenPageLimit = 4
+        mViewPager.offscreenPageLimit = 5
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

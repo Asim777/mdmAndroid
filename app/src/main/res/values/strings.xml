@@ -24,11 +24,14 @@
     <string name="address">Address:</string>
     <string name="portfolio_image_content_description">Portfolio Image</string>
     <string name="partners_logos_content_description">Partners Logos Content Description</string>
+    <string name="im_team_member">I\'m a team member</string>
+    <string name="my_account">My Account</string>
     <string-array name="tab_names">
         <item>About Us</item>
         <item>Portfolio</item>
         <item>Team</item>
         <item>News</item>
         <item>Contact Us</item>
+        <item>My Account</item>
     </string-array>
 </resources>
