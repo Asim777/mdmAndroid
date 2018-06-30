@@ -53,12 +53,12 @@ class ContactUsFragment : Fragment(), IDataForFragment {
         mContactUsAddress = rootView.findViewById(R.id.contact_us_address_value)
         mContactUsContent = rootView.findViewById(R.id.contact_us_content)
 
+        if (mContactPage != null) {
+            renderContactPage()
+        }
+
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestContactUsPage(context!!, this, Network.Companion.RequestType.REQUEST_CONTACT_US)
-        } else {
-            if (mContactPage != null) {
-                renderContactPage()
-            }
         }
 
         return rootView

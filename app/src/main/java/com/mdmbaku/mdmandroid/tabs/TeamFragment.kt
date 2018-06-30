@@ -43,12 +43,12 @@ class TeamFragment : Fragment(), IDataForFragment {
         mTeamTextContentTextView = rootView.findViewById(R.id.team_text_content) as TextView
         mAchievementsTextTitleTextView = rootView.findViewById(R.id.achievements_text_title) as TextView
 
+        if (mTeamPage != null) {
+            renderTeamPage()
+        }
+
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestTeamPage(context!!, this, Network.Companion.RequestType.REQUEST_TEAM)
-        } else {
-            if (mTeamPage != null) {
-                renderTeamPage()
-            }
         }
 
         return rootView

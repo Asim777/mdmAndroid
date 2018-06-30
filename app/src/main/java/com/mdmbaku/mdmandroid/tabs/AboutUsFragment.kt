@@ -47,12 +47,12 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
         mAboutUsTitleTextView = rootView.findViewById(R.id.about_us_title)
         mAboutUsContentTextView = rootView.findViewById(R.id.about_us_content)
 
+        if (mAboutUsPage != null) {
+            renderAboutUsContent()
+        }
+
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestAboutUsPage(context!!, this, Network.Companion.RequestType.REQUEST_ABOUT_US)
-        } else {
-            if (mAboutUsPage != null) {
-                renderAboutUsContent()
-            }
         }
 
         listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/HovsanCity.png")

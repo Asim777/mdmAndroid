@@ -38,13 +38,12 @@ class PortfolioFragment : Fragment(), IDataForFragment {
         val rootView: View = inflater.inflate(R.layout.fragment_portfolio, container, false)
         recyclerView = rootView.findViewById(R.id.portfolio_recyclerView) as RecyclerView
 
+        if (mPortfolioPage != null) {
+            renderPortfolioList()
+        }
 
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestPortfolioPage(context!!, this, Network.Companion.RequestType.REQUEST_PORTFOLIO)
-        } else {
-            if (mPortfolioPage != null) {
-                renderPortfolioList()
-            }
         }
 
         return rootView
