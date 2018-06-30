@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    app:headerLayout="@layout/nav_header"
+    app:itemTextColor="@drawable/drawer_item_color"
+    app:theme="@style/AppTheme.DrawerMenu">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp">
+
+        <LinearLayout
+            android:id="@+id/navigation_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="start"
+            android:orientation="vertical"
+            android:paddingEnd="20dp"
+            android:paddingStart="20dp">
+
+            <TextView
+                android:id="@+id/menu_about_us"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/about_us"
+                android:textColor="@drawable/drawer_item_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/menu_portfolio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/portfolio"
+                android:textColor="@drawable/drawer_item_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/menu_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/team"
+                android:textColor="@drawable/drawer_item_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/menu_news"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/news"
+                android:textColor="@drawable/drawer_item_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/menu_contact_us"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/contact_us"
+                android:textColor="@drawable/drawer_item_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/menu_my_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/my_account"
+                android:textColor="@drawable/drawer_item_color"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/social_networks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/facebook_logo_cd"
+                android:src="@drawable/ic_facebook" />
+
+            <ImageView
+                android:id="@+id/twitter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/twitter_logo_cd"
+                android:src="@drawable/ic_twitter" />
+
+            <ImageView
+                android:id="@+id/linkedin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/linkedin_logo_cd"
+                android:src="@drawable/ic_linkedin" />
+
+            <ImageView
+                android:id="@+id/instagram"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/instagram_logo_cd"
+                android:src="@drawable/ic_instagram" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</android.support.design.widget.NavigationView>

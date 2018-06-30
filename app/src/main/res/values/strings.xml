@@ -26,6 +26,10 @@
     <string name="partners_logos_content_description">Partners Logos Content Description</string>
     <string name="im_team_member">I\'m a team member</string>
     <string name="my_account">My Account</string>
+    <string name="facebook_logo_cd">Facebook Logo</string>
+    <string name="twitter_logo_cd">Twitter Logo</string>
+    <string name="linkedin_logo_cd">Linkedin Logo</string>
+    <string name="instagram_logo_cd">Instagram Logo</string>
     <string-array name="tab_names">
         <item>About Us</item>
         <item>Portfolio</item>
