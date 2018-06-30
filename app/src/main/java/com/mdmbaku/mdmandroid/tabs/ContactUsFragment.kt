@@ -27,17 +27,18 @@ import com.mdmbaku.mdmandroid.data.WpPage
 import com.mdmbaku.mdmandroid.utils.IDataForFragment
 import com.mdmbaku.mdmandroid.utils.Network
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_contact_us.*
 import org.json.JSONObject
 import java.io.StringReader
 
-private var gson: Gson = Gson()
-private lateinit var phoneToCall: String
-private var mContactPage: WpPage? = null
+private const val COMPANY_LATITUDE = 40.384175
+private const val COMPANY_LONGITUDE = 49.828982
 
-class ContactUsFragment : Fragment(), IDataForFragment {
+class ContactUsFragment : Fragment(), IDataForFragment/*, OnMapReadyCallback*/ {
     private var realm: Realm = Realm.getDefaultInstance()
+    private var gson: Gson = Gson()
     private lateinit var mContactUsEmail: TextView
+    private var mContactPage: WpPage? = null
+    private lateinit var phoneToCall: String
     private lateinit var mContactUsPhone: TextView
     private lateinit var mContactUsFax: TextView
     private lateinit var mContactUsAddress: TextView
@@ -60,6 +61,10 @@ class ContactUsFragment : Fragment(), IDataForFragment {
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestContactUsPage(context!!, this, Network.Companion.RequestType.REQUEST_CONTACT_US)
         }
+
+        //TODO: Uncomment when you get map API KEY
+        /* val mapFragment =childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
+         mapFragment.getMapAsync(this)*/
 
         return rootView
     }
@@ -247,4 +252,16 @@ class ContactUsFragment : Fragment(), IDataForFragment {
             }
         }
     }
+
+    //TODO: Uncomment when you get map API KEY
+  /*  override fun onMapReady(googleMap: GoogleMap?) {
+        val companyLocation = LatLng(COMPANY_LATITUDE, COMPANY_LONGITUDE)
+        googleMap?.addMarker(MarkerOptions()
+                .position(LatLng(companyLocation.latitude, companyLocation.longitude))
+                .title(ApplicationClass.getAppContext().getString(R.string.map_marker_title)))
+
+        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(companyLocation, 13f))
+
+    }*/
 }

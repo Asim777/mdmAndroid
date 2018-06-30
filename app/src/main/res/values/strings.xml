@@ -30,6 +30,7 @@
     <string name="twitter_logo_cd">Twitter Logo</string>
     <string name="linkedin_logo_cd">Linkedin Logo</string>
     <string name="instagram_logo_cd">Instagram Logo</string>
+    <string name="map_marker_title">MDM Baku Office</string>
     <string-array name="tab_names">
         <item>About Us</item>
         <item>Portfolio</item>
