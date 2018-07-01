@@ -37,7 +37,8 @@
                     android:paddingTop="20dp"
                     android:textAlignment="textStart"
                     android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:targetApi="jelly_bean" />
 
                 <TextView
                     android:id="@+id/about_us_content"

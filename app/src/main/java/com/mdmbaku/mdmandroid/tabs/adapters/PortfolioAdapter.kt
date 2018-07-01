@@ -41,6 +41,7 @@ class PortfolioAdapter(private val portfolioItems : List<PortfolioItem>) : Recyc
     }
 
     override fun onBindViewHolder(holder: VHItem, position: Int) {
+        holder.title.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
         holder.title.text = getItem(position).title
         GlideApp.with(ApplicationClass.getAppContext()).load(getItem(position).thumbnail).into(holder.image)
     }

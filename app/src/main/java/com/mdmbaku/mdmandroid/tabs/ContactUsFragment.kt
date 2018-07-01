@@ -36,23 +36,45 @@ private const val COMPANY_LONGITUDE = 49.828982
 class ContactUsFragment : Fragment(), IDataForFragment/*, OnMapReadyCallback*/ {
     private var realm: Realm = Realm.getDefaultInstance()
     private var gson: Gson = Gson()
-    private lateinit var mContactUsEmail: TextView
     private var mContactPage: WpPage? = null
     private lateinit var phoneToCall: String
+    private lateinit var mContactUsTitle: TextView
+    private lateinit var mContactUsEmail: TextView
+    private lateinit var mContactUsEmailLabel: TextView
     private lateinit var mContactUsPhone: TextView
+    private lateinit var mContactUsPhoneLabel: TextView
     private lateinit var mContactUsFax: TextView
+    private lateinit var mContactUsFaxLabel: TextView
     private lateinit var mContactUsAddress: TextView
+    private lateinit var mContactUsAddressLabel: TextView
     private lateinit var mContactUsContent: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         // Inflate the layout for this fragment
         val rootView: View = inflater.inflate(R.layout.fragment_contact_us, container, false)
+        mContactUsTitle = rootView.findViewById(R.id.contact_us_title)
+        mContactUsEmailLabel = rootView.findViewById(R.id.contact_us_email_label)
         mContactUsEmail = rootView.findViewById(R.id.contact_us_email_value)
+        mContactUsPhoneLabel = rootView.findViewById(R.id.contact_us_phone_label)
         mContactUsPhone = rootView.findViewById(R.id.contact_us_phone_value)
+        mContactUsFaxLabel = rootView.findViewById(R.id.contact_us_fax_label)
         mContactUsFax = rootView.findViewById(R.id.contact_us_fax_value)
+        mContactUsAddressLabel = rootView.findViewById(R.id.contact_us_address_label)
         mContactUsAddress = rootView.findViewById(R.id.contact_us_address_value)
         mContactUsContent = rootView.findViewById(R.id.contact_us_content)
+
+        mContactUsTitle.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mContactUsContent.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+        mContactUsEmailLabel.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mContactUsEmail.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+        mContactUsPhoneLabel.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mContactUsPhone.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+        mContactUsFaxLabel.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mContactUsFax.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+        mContactUsAddressLabel.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mContactUsAddress.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+
 
         if (mContactPage != null) {
             renderContactPage()

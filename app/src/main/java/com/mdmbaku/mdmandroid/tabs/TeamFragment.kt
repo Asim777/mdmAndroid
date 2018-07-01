@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.google.gson.Gson
+import com.mdmbaku.mdmandroid.ApplicationClass
 import com.mdmbaku.mdmandroid.HomeActivity
 import com.mdmbaku.mdmandroid.R
 import com.mdmbaku.mdmandroid.data.AchievementItem
@@ -42,6 +43,11 @@ class TeamFragment : Fragment(), IDataForFragment {
         mTeamTextTitleTextView = rootView.findViewById(R.id.team_text_title) as TextView
         mTeamTextContentTextView = rootView.findViewById(R.id.team_text_content) as TextView
         mAchievementsTextTitleTextView = rootView.findViewById(R.id.achievements_text_title) as TextView
+
+        mTeamTextTitleTextView.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mAchievementsTextTitleTextView.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mTeamTextContentTextView.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+
 
         if (mTeamPage != null) {
             renderTeamPage()

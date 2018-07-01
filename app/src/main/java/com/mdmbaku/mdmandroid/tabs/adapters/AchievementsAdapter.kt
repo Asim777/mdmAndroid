@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.mdmbaku.mdmandroid.ApplicationClass
 import com.mdmbaku.mdmandroid.R
 import com.mdmbaku.mdmandroid.data.AchievementItem
 
@@ -31,6 +32,10 @@ class AchievementsAdapter(private val achievementItems : List<AchievementItem>) 
     }
 
     override fun onBindViewHolder(holder: VHItem, position: Int) {
+        holder.title.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
+        holder.awarder.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        holder.date.typeface = ApplicationClass.getAppInstance()?.getItalicTypeface()
+
         holder.title.text = getItem(position).content
         holder.awarder.text = getItem(position).awarder
         holder.date.text = getItem(position).date

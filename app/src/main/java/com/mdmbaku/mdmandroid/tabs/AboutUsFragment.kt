@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.request.RequestOptions
 import com.glide.slider.library.SliderLayout
@@ -17,6 +16,7 @@ import com.glide.slider.library.SliderTypes.DefaultSliderView
 import com.glide.slider.library.SliderTypes.TextSliderView
 import com.glide.slider.library.Tricks.ViewPagerEx
 import com.google.gson.Gson
+import com.mdmbaku.mdmandroid.ApplicationClass
 import com.mdmbaku.mdmandroid.HomeActivity
 import com.mdmbaku.mdmandroid.R
 import com.mdmbaku.mdmandroid.data.WpPage
@@ -36,8 +36,8 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
     private var mClientLogosPage: WpPage? = null
     private lateinit var mMainSlider: SliderLayout
     private lateinit var mClientsSlider: SliderLayout
-    private lateinit var mClientsLogosImageView: ImageView
     private lateinit var mAboutUsTitleTextView: TextView
+    private lateinit var mClientsTitleTextView: TextView
     private lateinit var mAboutUsContentTextView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,6 +48,11 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
         mClientsSlider = rootView.findViewById(R.id.clients_slider) as SliderLayout
         mAboutUsTitleTextView = rootView.findViewById(R.id.about_us_title)
         mAboutUsContentTextView = rootView.findViewById(R.id.about_us_content)
+        mClientsTitleTextView = rootView.findViewById(R.id.clients_title)
+
+        mAboutUsTitleTextView.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mClientsTitleTextView.typeface = ApplicationClass.getAppInstance()?.getBoldTypeface()
+        mAboutUsContentTextView.typeface = ApplicationClass.getAppInstance()?.getRegularTypeface()
 
         if (mAboutUsPage != null && !mAboutUsPage?.content.toString().isBlank() &&
                 !mAboutUsPage?.content?.renderedContent!!.isBlank()) {
