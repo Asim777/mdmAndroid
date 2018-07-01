@@ -20,6 +20,9 @@ class Network {
         requestWpPage(context, fragment, requestType, WpPageId.CLIENT_LOGOS.pageId.toString())
     }
 
+    fun requestSlider(context: Context, fragment: IDataForFragment, requestType: RequestType) {
+        requestWpPage(context, fragment, requestType, WpPageId.SLIDER.pageId.toString())
+    }
 
     fun requestPortfolioPage(context: Context, fragment: IDataForFragment, requestType: RequestType) {
        requestWpPage(context, fragment, requestType, WpPageId.PORTFOLIO.pageId.toString())
@@ -89,12 +92,14 @@ class Network {
             REQUEST_CONTACT_US,
             REQUEST_SINGLE_PORTFOLIO,
             REQUEST_TEAM,
-            REQUEST_CLIENT_LOGOS
+            REQUEST_CLIENT_LOGOS,
+            REQUEST_SLIDER
         }
 
         enum class WpPageId(val pageId: Int) {
             ABOUT_US(2),
             CLIENT_LOGOS(771),
+            SLIDER(790),
             NEWS(0),
             PORTFOLIO(321),
             CONTACT_US(766),

@@ -29,11 +29,10 @@ import org.json.JSONObject
 private lateinit var gson: Gson
 
 class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFragment {
-    private var listUrl = mutableListOf<String>()
-    private var listText = mutableListOf<String>()
     private var realm: Realm = Realm.getDefaultInstance()
     private var mAboutUsPage: WpPage? = null
     private var mClientLogosPage: WpPage? = null
+    private var mTopSliderPage: WpPage? = null
     private lateinit var mMainSlider: SliderLayout
     private lateinit var mClientsSlider: SliderLayout
     private lateinit var mAboutUsTitleTextView: TextView
@@ -61,79 +60,72 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
 
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestAboutUsPage(context!!, this, Network.Companion.RequestType.REQUEST_ABOUT_US)
+            Network.getInstance().requestSlider(context!!, this, Network.Companion.RequestType.REQUEST_SLIDER)
             Network.getInstance().requestClientLogos(context!!, this, Network.Companion.RequestType.REQUEST_CLIENT_LOGOS)
         }
 
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/HovsanCity.png")
-        listText.add("Rational organization of space needed to any human activities Design With Us")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/OIK.png")
-        listText.add("Functionality Flexibility Economic efficiency")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/KacmasBusinessDeveloppingCenter.png")
-        listText.add("Protection of ecological balance eco culture clear recycling ")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/LenkoranMotel.png")
-        listText.add("Design includes Sustainability Longevity")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/Basketbol4.png")
-        listText.add("Aesthetic Ergonomically Comfortable environment")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/BakuComplex6.png")
-        listText.add("A modern approach to traditional design Aesthetic Comfortable measurement")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/Gonche.png")
-        listText.add("")
-
-        listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/KorpuAlov6.png")
-        listText.add("")
-
-        // initialize SliderLayout
-        for (i in listUrl.indices) {
-            val sliderView = TextSliderView(activity)
-            sliderView
-                    .image(listUrl[i])
-                    .description(listText[i] + "\n")
-                    .setProgressBarVisible(true)
-                    .setRequestOption(RequestOptions().centerCrop())
-                    .setBackgroundColor(Color.WHITE)
-
-            mMainSlider.addSlider(sliderView)
-        }
+        updateTopSliderPage()
+        updateClientLogosPage()
+        updateTopSlider()
+        updateClientsSlider()
 
         return rootView
     }
 
     override fun dataForFragment(jsonObject: JSONObject, requestType: Network.Companion.RequestType) {
 
-        if (requestType == Network.Companion.RequestType.REQUEST_ABOUT_US) {
-            val aboutUsPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
+        when (requestType) {
+            Network.Companion.RequestType.REQUEST_ABOUT_US -> {
+                val aboutUsPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
 
-            try {
-                realm.beginTransaction()
-                realm.copyToRealmOrUpdate(aboutUsPage)
-                realm.commitTransaction()
+                try {
+                    realm.beginTransaction()
+                    realm.copyToRealmOrUpdate(aboutUsPage)
+                    realm.commitTransaction()
 
-                updateAboutUsPage()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("Realm error", e.message)
+                    updateAboutUsPage()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("Realm error", e.message)
+                }
+
+                renderAboutUsContent()
             }
 
-            renderAboutUsContent()
-        } else if (requestType == Network.Companion.RequestType.REQUEST_CLIENT_LOGOS) {
-            val clientLogosPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
+            Network.Companion.RequestType.REQUEST_SLIDER -> {
+                val sliderPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
 
-            try {
-                realm.beginTransaction()
-                realm.copyToRealmOrUpdate(clientLogosPage)
-                realm.commitTransaction()
+                try {
+                    realm.beginTransaction()
+                    realm.copyToRealmOrUpdate(sliderPage)
+                    realm.commitTransaction()
 
-                updateClientLogosPage()
-                renderAboutUsContent()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("Realm error", e.message)
+                    updateTopSliderPage()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("Realm error", e.message)
+                }
+
+                updateTopSlider()
+            }
+
+            Network.Companion.RequestType.REQUEST_CLIENT_LOGOS -> {
+                val clientLogosPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
+
+                try {
+                    realm.beginTransaction()
+                    realm.copyToRealmOrUpdate(clientLogosPage)
+                    realm.commitTransaction()
+
+                    updateClientLogosPage()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("Realm error", e.message)
+                }
+
+                updateClientsSlider()
+            }
+            else -> {
             }
         }
     }
@@ -146,6 +138,57 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
     private fun updateClientLogosPage() {
         mClientLogosPage = realm.where(WpPage::class.java).equalTo("id",
                 Network.Companion.WpPageId.CLIENT_LOGOS.pageId).findFirst()
+    }
+
+    private fun updateTopSliderPage() {
+        mTopSliderPage = realm.where(WpPage::class.java).equalTo("id",
+                Network.Companion.WpPageId.SLIDER.pageId).findFirst()
+    }
+
+    private fun updateTopSlider() {
+        if (mTopSliderPage != null) {
+            val topSliderList = getTopSliderItems()
+
+            if (topSliderList != null) {
+
+                // initialize SliderLayout
+                mMainSlider.removeAllSliders()
+                for ((image, description) in topSliderList) {
+                    val sliderView = TextSliderView(activity)
+                    sliderView
+                            .image(image)
+                            .description(description + "\n")
+                            .setProgressBarVisible(true)
+                            .setRequestOption(RequestOptions().centerCrop())
+                            .setBackgroundColor(Color.WHITE)
+
+                    mMainSlider.addSlider(sliderView)
+                }
+            }
+        }
+    }
+
+    private fun updateClientsSlider() {
+        if (mClientLogosPage != null) {
+            val logos = getClientLogos()
+
+            if (logos != null) {
+                // initialize SliderLayout
+                mClientsSlider.removeAllSliders()
+
+                for (i in logos.indices) {
+                    // horizontal and cycled carousel layout
+                    val sliderView = DefaultSliderView(activity)
+                    sliderView
+                            .image(logos[i])
+                            .setProgressBarVisible(true)
+                            .setRequestOption(RequestOptions().centerInside())
+                            .setBackgroundColor(Color.WHITE)
+
+                    mClientsSlider.addSlider(sliderView)
+                }
+            }
+        }
     }
 
     private fun renderAboutUsContent() {
@@ -164,25 +207,6 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
                 mAboutUsContentTextView.text = Html.fromHtml(aboutUsContent)
             }
         }
-
-        if (mClientLogosPage != null) {
-            // horizontal and cycled carousel layout
-            val logos = getClientLogos()
-
-            if (logos != null) {
-                // initialize SliderLayout
-                for (i in logos.indices) {
-                    val sliderView = DefaultSliderView(activity)
-                    sliderView
-                            .image(logos[i])
-                            .setProgressBarVisible(true)
-                            .setRequestOption(RequestOptions().centerInside())
-                            .setBackgroundColor(Color.WHITE)
-
-                    mClientsSlider.addSlider(sliderView)
-                }
-            }
-        }
     }
 
     private fun getClientLogos(): List<String>? {
@@ -191,13 +215,37 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
                 ?.substring(3, clientLogosContent.length - 5)
                 ?.split("<br />")
 
-        return logosList?.map {it ->
+        return logosList?.map { it ->
             if (it.startsWith("\n")) {
                 it.substring(1)
             } else {
                 it
             }
         }
+    }
+
+    private fun getTopSliderItems(): Map<String, String>? {
+        val resultMap = mutableMapOf<String, String>()
+        val sliderContent = mTopSliderPage?.content?.renderedContent
+        var sliderItemsList = sliderContent
+                ?.substring(3, sliderContent.length - 5)
+                ?.split("<br />")
+
+        sliderItemsList = sliderItemsList?.map { it ->
+            if (it.startsWith("\n")) {
+                it.substring(1)
+            } else {
+                it
+            }
+        }
+
+        if (sliderItemsList != null) {
+            for (sliderItem in sliderItemsList) {
+                val sliderItemSplitted = sliderItem.split(",")
+                resultMap[sliderItemSplitted[0]] = sliderItemSplitted[1]
+            }
+        }
+        return resultMap
     }
 
     private fun String.removeListIcons(): String {
