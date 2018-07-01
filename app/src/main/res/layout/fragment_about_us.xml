@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <com.glide.slider.library.SliderLayout
-            android:id="@+id/slider"
+            android:id="@+id/main_slider"
             android:layout_width="match_parent"
             android:layout_height="200dp" />
 
@@ -52,11 +52,25 @@
                     android:textAlignment="textStart"
                     android:textSize="15sp" />
 
-                <ImageView
-                    android:id="@+id/partners_logos"
+                <TextView
+                    android:id="@+id/clients_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/partners_logos_content_description" />
+                    android:layout_gravity="center"
+                    android:gravity="start"
+                    android:paddingBottom="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
+                    android:paddingTop="20dp"
+                    android:text="@string/clients"
+                    android:textAlignment="textStart"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <com.glide.slider.library.SliderLayout
+                    android:id="@+id/clients_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

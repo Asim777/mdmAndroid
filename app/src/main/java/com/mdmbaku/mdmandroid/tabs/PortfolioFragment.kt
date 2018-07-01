@@ -112,7 +112,8 @@ class PortfolioFragment : Fragment(), IDataForFragment {
 
             portfolioAdapter.setOnItemClickListener(object : PortfolioAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, selectedPortfolioItem: PortfolioItem) {
-                    val singlePortfolioItemIntent = Intent(this@PortfolioFragment.activity, SinglePortfolioItemActivity::class.java)
+                    val singlePortfolioItemIntent = Intent(this@PortfolioFragment.activity,
+                            SinglePortfolioItemActivity::class.java)
                     singlePortfolioItemIntent.putExtra(PORTFOLIO_ITEM, selectedPortfolioItem)
                     singlePortfolioItemIntent.putExtra(PORTFOLIO_ITEM_TITLE, selectedPortfolioItem.title)
                     startActivity(singlePortfolioItemIntent)

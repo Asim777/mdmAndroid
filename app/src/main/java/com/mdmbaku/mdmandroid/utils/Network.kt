@@ -6,8 +6,6 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
-import com.mdmbaku.mdmandroid.tabs.ContactUsFragment
-import com.mdmbaku.mdmandroid.tabs.TeamFragment
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -18,6 +16,11 @@ class Network {
         requestWpPage(context, fragment, requestType, WpPageId.ABOUT_US.pageId.toString())
     }
 
+    fun requestClientLogos(context: Context, fragment: IDataForFragment, requestType: RequestType) {
+        requestWpPage(context, fragment, requestType, WpPageId.CLIENT_LOGOS.pageId.toString())
+    }
+
+
     fun requestPortfolioPage(context: Context, fragment: IDataForFragment, requestType: RequestType) {
        requestWpPage(context, fragment, requestType, WpPageId.PORTFOLIO.pageId.toString())
     }
@@ -27,11 +30,11 @@ class Network {
         requestWpPageBySlug(context, activity, requestType, pageSlug)
     }
 
-    fun requestTeamPage(context: Context, fragment: TeamFragment, requestType: RequestType) {
+    fun requestTeamPage(context: Context, fragment: IDataForFragment, requestType: RequestType) {
         requestWpPage(context, fragment, requestType,  WpPageId.TEAM.pageId.toString())
     }
 
-    fun requestContactUsPage(context: Context, fragment: ContactUsFragment, requestType: RequestType) {
+    fun requestContactUsPage(context: Context, fragment: IDataForFragment, requestType: RequestType) {
         requestWpPage(context, fragment, requestType, WpPageId.CONTACT_US.pageId.toString())
     }
 
@@ -85,11 +88,13 @@ class Network {
             REQUEST_PORTFOLIO,
             REQUEST_CONTACT_US,
             REQUEST_SINGLE_PORTFOLIO,
-            REQUEST_TEAM
+            REQUEST_TEAM,
+            REQUEST_CLIENT_LOGOS
         }
 
         enum class WpPageId(val pageId: Int) {
             ABOUT_US(2),
+            CLIENT_LOGOS(771),
             NEWS(0),
             PORTFOLIO(321),
             CONTACT_US(766),

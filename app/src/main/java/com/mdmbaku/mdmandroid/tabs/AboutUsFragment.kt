@@ -13,9 +13,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.request.RequestOptions
 import com.glide.slider.library.SliderLayout
+import com.glide.slider.library.SliderTypes.DefaultSliderView
 import com.glide.slider.library.SliderTypes.TextSliderView
 import com.glide.slider.library.Tricks.ViewPagerEx
-import com.glide.slider.library.svg.GlideApp
 import com.google.gson.Gson
 import com.mdmbaku.mdmandroid.HomeActivity
 import com.mdmbaku.mdmandroid.R
@@ -23,8 +23,8 @@ import com.mdmbaku.mdmandroid.data.WpPage
 import com.mdmbaku.mdmandroid.utils.IDataForFragment
 import com.mdmbaku.mdmandroid.utils.Network
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_about_us.*
 import org.json.JSONObject
+
 
 private lateinit var gson: Gson
 
@@ -33,8 +33,10 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
     private var listText = mutableListOf<String>()
     private var realm: Realm = Realm.getDefaultInstance()
     private var mAboutUsPage: WpPage? = null
-    private lateinit var mSlider: SliderLayout
-    private lateinit var mPartnersLogosImageView: ImageView
+    private var mClientLogosPage: WpPage? = null
+    private lateinit var mMainSlider: SliderLayout
+    private lateinit var mClientsSlider: SliderLayout
+    private lateinit var mClientsLogosImageView: ImageView
     private lateinit var mAboutUsTitleTextView: TextView
     private lateinit var mAboutUsContentTextView: TextView
 
@@ -42,17 +44,19 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
 
         // Inflate the layout for this fragment
         val rootView: View = inflater.inflate(R.layout.fragment_about_us, container, false)
-        mSlider = rootView.findViewById(R.id.slider)
-        mPartnersLogosImageView = rootView.findViewById(R.id.partners_logos)
+        mMainSlider = rootView.findViewById(R.id.main_slider) as SliderLayout
+        mClientsSlider = rootView.findViewById(R.id.clients_slider) as SliderLayout
         mAboutUsTitleTextView = rootView.findViewById(R.id.about_us_title)
         mAboutUsContentTextView = rootView.findViewById(R.id.about_us_content)
 
-        if (mAboutUsPage != null) {
+        if (mAboutUsPage != null && !mAboutUsPage?.content.toString().isBlank() &&
+                !mAboutUsPage?.content?.renderedContent!!.isBlank()) {
             renderAboutUsContent()
         }
 
         if ((activity as HomeActivity).isNetworkAvailable()) {
             Network.getInstance().requestAboutUsPage(context!!, this, Network.Companion.RequestType.REQUEST_ABOUT_US)
+            Network.getInstance().requestClientLogos(context!!, this, Network.Companion.RequestType.REQUEST_CLIENT_LOGOS)
         }
 
         listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/HovsanCity.png")
@@ -79,21 +83,17 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
         listUrl.add("http://mdmbaku.com/wp-content/uploads/2018/03/KorpuAlov6.png")
         listText.add("")
 
-        // if you want show image only / without description text use DefaultSliderView instead
-        val requestOptions = RequestOptions()
-        requestOptions.centerCrop()
-
         // initialize SliderLayout
         for (i in listUrl.indices) {
             val sliderView = TextSliderView(activity)
             sliderView
                     .image(listUrl[i])
-                    .description(listText[i]+"\n")
+                    .description(listText[i] + "\n")
                     .setProgressBarVisible(true)
-                    .setRequestOption(requestOptions)
+                    .setRequestOption(RequestOptions().centerCrop())
                     .setBackgroundColor(Color.WHITE)
 
-            mSlider.addSlider(sliderView)
+            mMainSlider.addSlider(sliderView)
         }
 
         return rootView
@@ -106,8 +106,6 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
 
             try {
                 realm.beginTransaction()
-                /*val recordsToRemove = realm.where(WpPage :: class.java).equalTo("id", aboutUsPage.id).findAll()
-                recordsToRemove.deleteAllFromRealm()*/
                 realm.copyToRealmOrUpdate(aboutUsPage)
                 realm.commitTransaction()
 
@@ -118,8 +116,21 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
             }
 
             renderAboutUsContent()
-        }
+        } else if (requestType == Network.Companion.RequestType.REQUEST_CLIENT_LOGOS) {
+            val clientLogosPage: WpPage = gson.fromJson(jsonObject.toString(), WpPage::class.java)
 
+            try {
+                realm.beginTransaction()
+                realm.copyToRealmOrUpdate(clientLogosPage)
+                realm.commitTransaction()
+
+                updateClientLogosPage()
+                renderAboutUsContent()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("Realm error", e.message)
+            }
+        }
     }
 
     private fun updateAboutUsPage() {
@@ -127,10 +138,18 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
                 Network.Companion.WpPageId.ABOUT_US.pageId).findFirst()
     }
 
+    private fun updateClientLogosPage() {
+        mClientLogosPage = realm.where(WpPage::class.java).equalTo("id",
+                Network.Companion.WpPageId.CLIENT_LOGOS.pageId).findFirst()
+    }
+
     private fun renderAboutUsContent() {
         val aboutUsTitle = mAboutUsPage?.title?.renderedTitle
         if (aboutUsTitle != null && mAboutUsPage?.content != null) {
-            val aboutUsContent = removeListIcons(mAboutUsPage?.content?.renderedContent!!)
+            val renderedContent = mAboutUsPage?.content?.renderedContent
+            val aboutUsContent = renderedContent
+                    ?.substring(0, renderedContent.indexOf("<h3></h3>\n<h3><strong>Clients"))
+                    ?.removeListIcons()
 
             mAboutUsTitleTextView.text = aboutUsTitle
 
@@ -141,19 +160,47 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
             }
         }
 
-        GlideApp.with(this)
-                .load("http://mdmbaku.com/wp-content/uploads/2018/03/CompanyPresentationAchive.008.jpeg")
-                .into(mPartnersLogosImageView)
+        if (mClientLogosPage != null) {
+            // horizontal and cycled carousel layout
+            val logos = getClientLogos()
+
+            if (logos != null) {
+                // initialize SliderLayout
+                for (i in logos.indices) {
+                    val sliderView = DefaultSliderView(activity)
+                    sliderView
+                            .image(logos[i])
+                            .setProgressBarVisible(true)
+                            .setRequestOption(RequestOptions().centerInside())
+                            .setBackgroundColor(Color.WHITE)
+
+                    mClientsSlider.addSlider(sliderView)
+                }
+            }
+        }
     }
 
-    private fun removeListIcons(aboutUsContent: String): String {
+    private fun getClientLogos(): List<String>? {
+        val clientLogosContent = mClientLogosPage?.content?.renderedContent
+        val logosList = clientLogosContent
+                ?.substring(3, clientLogosContent.length - 5)
+                ?.split("<br />")
 
-        return aboutUsContent.replace("<ul>", "")
+        return logosList?.map {it ->
+            if (it.startsWith("\n")) {
+                it.substring(1)
+            } else {
+                it
+            }
+        }
+    }
+
+    private fun String.removeListIcons(): String {
+        return this.replace("<ul>", "")
                 .replace("</ul>", "")
                 .replace("<li>", "<p>")
                 .replace("</li>", "</p>")
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -162,7 +209,7 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
 
     override fun onStop() {
         // To prevent a memory leak on rotation, make sure to call stopAutoCycle() on the slider before activity or fragment is destroyed
-        mSlider.stopAutoCycle()
+        mMainSlider.stopAutoCycle()
         super.onStop()
     }
 
@@ -180,7 +227,6 @@ class AboutUsFragment : Fragment(), ViewPagerEx.OnPageChangeListener, IDataForFr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         updateAboutUsPage()
     }
 }
