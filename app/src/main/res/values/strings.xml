@@ -40,4 +40,5 @@
         <item>Contact Us</item>
         <item>My Account</item>
     </string-array>
+    <string name="GOOGLE_MAPS_API_KEY">AIzaSyDwAuC5qCE-b34lLtyC9SHNG2FldL3hH9s"</string>
 </resources>

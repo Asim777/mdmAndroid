@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import android.widget.ImageView
+import com.github.chrisbanes.photoview.PhotoView
 import com.glide.slider.library.svg.GlideApp
 import com.google.gson.Gson
 import com.mdmbaku.mdmandroid.R
@@ -21,7 +21,7 @@ private val gson: Gson = Gson()
 
 class SinglePortfolioItemActivity : AppCompatActivity(), IDataForActivity {
 
-    lateinit var mPortfolioImageView: ImageView
+    private lateinit var mPortfolioPhotoView: PhotoView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +29,7 @@ class SinglePortfolioItemActivity : AppCompatActivity(), IDataForActivity {
         setContentView(R.layout.activity_single_portfolio_item)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        mPortfolioImageView = findViewById(R.id.portfolio_image)
+        mPortfolioPhotoView = findViewById(R.id.portfolio_image)
         setSupportActionBar(toolbar)
 
         val portfolioItem = intent.getParcelableExtra<PortfolioItem>(PORTFOLIO_ITEM)
@@ -58,7 +58,7 @@ class SinglePortfolioItemActivity : AppCompatActivity(), IDataForActivity {
                         portfolioContent.indexOf("1024w") - 1)
                 GlideApp.with(applicationContext)
                         .load(portfolioSingleImageLink)
-                        .into(mPortfolioImageView)
+                        .into(mPortfolioPhotoView)
             }
         }
     }

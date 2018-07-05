@@ -19,6 +19,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import com.mdmbaku.mdmandroid.ApplicationClass
 import com.mdmbaku.mdmandroid.HomeActivity
@@ -33,7 +36,7 @@ import java.io.StringReader
 private const val COMPANY_LATITUDE = 40.384175
 private const val COMPANY_LONGITUDE = 49.828982
 
-class ContactUsFragment : Fragment(), IDataForFragment/*, OnMapReadyCallback*/ {
+class ContactUsFragment : Fragment(), IDataForFragment {
     private var realm: Realm = Realm.getDefaultInstance()
     private var gson: Gson = Gson()
     private var mContactPage: WpPage? = null
@@ -85,8 +88,29 @@ class ContactUsFragment : Fragment(), IDataForFragment/*, OnMapReadyCallback*/ {
         }
 
         //TODO: Uncomment when you get map API KEY
-        /* val mapFragment =childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
-         mapFragment.getMapAsync(this)*/
+        val mMapView = rootView.findViewById(R.id.google_map) as MapView
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume()
+
+        try {
+            MapsInitializer.initialize(ApplicationClass.getAppContext())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+         mMapView.getMapAsync { googleMap ->
+             val companyLocation = LatLng(COMPANY_LATITUDE, COMPANY_LONGITUDE)
+             googleMap?.addMarker(MarkerOptions()
+                     .position(LatLng(companyLocation.latitude, companyLocation.longitude))
+                     .title(ApplicationClass.getAppContext().getString(R.string.map_marker_title)))
+
+             googleMap?.uiSettings?.isMyLocationButtonEnabled = false
+             googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(companyLocation, 13f))
+
+         }
+         /*mMapView.getMapAsync { googleMap: GoogleMap ->
+
+        } */
 
         return rootView
     }
@@ -274,16 +298,4 @@ class ContactUsFragment : Fragment(), IDataForFragment/*, OnMapReadyCallback*/ {
             }
         }
     }
-
-    //TODO: Uncomment when you get map API KEY
-  /*  override fun onMapReady(googleMap: GoogleMap?) {
-        val companyLocation = LatLng(COMPANY_LATITUDE, COMPANY_LONGITUDE)
-        googleMap?.addMarker(MarkerOptions()
-                .position(LatLng(companyLocation.latitude, companyLocation.longitude))
-                .title(ApplicationClass.getAppContext().getString(R.string.map_marker_title)))
-
-        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(companyLocation, 13f))
-
-    }*/
 }
